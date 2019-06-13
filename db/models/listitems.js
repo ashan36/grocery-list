@@ -2,12 +2,14 @@
 module.exports = (sequelize, DataTypes) => {
   const ListItems = sequelize.define('ListItems', {
     itemName: DataTypes.STRING,
-    complete: DataTypes.BOOLEAN
+    complete: DataTypes.BOOLEAN,
+    listId: DataTypes.INTEGER
   }, {});
   ListItems.associate = function(models) {
     // associations can be defined here
     ListItems.belongsTo(models.GroceryList, {
-      onDelete:"CASCADE",
+      foreignKey: "listId",
+      onDelete: "CASCADE",
     });
   };
   return ListItems;

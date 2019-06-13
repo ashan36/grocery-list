@@ -2,18 +2,19 @@
 module.exports = (sequelize, DataTypes) => {
   const GroceryList = sequelize.define('GroceryList', {
     listName: DataTypes.STRING,
-    active: DataTypes.BOOLEAN
+    active: DataTypes.BOOLEAN,
+    createdBy: DataTypes.INTEGER,
   }, {});
   GroceryList.associate = function(models) {
     // associations can be defined here
     GroceryList.belongsToMany(models.User, {
-      foreignKey: "userID",
-      onDelete: "CASCADE",
+      through: "UsersLists"
     });
-    GroceryList.hasMany(models.listItems, {
-      foreignKey: "listID",
-      as: "items",
+    GroceryList.hasMany(models.ListItems, {
+      foreignKey: "listId",
+      as: "Items",
     });
+    GroceryList.hasOne(models.User);
   };
   return GroceryList;
 };

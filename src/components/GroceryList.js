@@ -1,24 +1,30 @@
 import React, { Component } from 'react';
+const listQuery = require("../../db/queries/GroceryListQueries.js");
 
 class GroceryList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       listItems: [],
+      currentListName: "Select one of your active lists.",
+      selectedListID: null,
     };
+  }
+
+  componentDidMount() {
   }
 
   render() {
     return (
       <table>
         <thead>
-          <th>Items</th>
+          <th>{this.state.currentListName}</th>
         </thead>
         <tbody>
           {
             this.state.listItems.map( (value, index) => {
               return (
-                <tr className="ListItemRow" key={value.key}>
+                <tr className="ListItemRow" key={value.id}>
                   <td className="ListItemCell">{value.itemName}</td>
                   <td className="CompleteCheck">{value.complete}</td>
                 </tr>
