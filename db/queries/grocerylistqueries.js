@@ -20,11 +20,11 @@ module.exports = {
 
   getUserMembers: (targetListId, callback) => {
     return User.findAll({
+      attributes: ['handle'],
       include: [{
         model: GroceryList,
         through: {
-          attributes: ['handle'],
-          where: {groceryListId: targetListId}
+          where: {GroceryListId: targetListId}
         }
       }]
     })
@@ -36,5 +36,22 @@ module.exports = {
     })
   },
 
-
+  getGroceryLists: (targetUserId, callback) => {
+    return GroceryList.findAll({
+      attributes: ["listName"],
+      include: [{
+        model: User,
+        through: {
+          where: {UserId: targetUserId}
+        }
+      }]
+    })
+    .then((lists) => {
+      callback(null, lists);
+    })
+    .catch((err) => {
+      callback(err);
+    })
+  },
+  
 }

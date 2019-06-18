@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-const listQuery = require("../../db/queries/GroceryListQueries.js");
 
 class GroceryList extends Component {
   constructor(props) {

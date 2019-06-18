@@ -71,18 +71,50 @@ describe("GroceryListQueries", () => {
         console.log(err);
         done();
       });
-
     });
   });
 
-  describe("#listItems()", () => {
+  describe("#getAllItems()", () => {
     it("should return a list of items belonging to the grocerylist", (done) => {
       GroceryListQueries.getAllItems(1, (err, items) => {
         if(err) {
           console.log(err);
+          done();
         }
         else {
-          expect(items).toBeDefined();
+          expect(items[0].dataValues.itemName).toBe("Item1");
+          done();
+        }
+      });
+    });
+  });
+
+  describe("#getUserMembers()", () => {
+    it("should return a list of users shared on a grocerylist", (done) => {
+      GroceryListQueries.getUserMembers(1, (err, users) => {
+        if(err) {
+          console.log(err);
+          done();
+        }
+        else {
+          expect(users[0].dataValues.handle).toBe("testUser1")
+          done();
+        }
+      });
+    });
+  });
+
+  describe("#getGroceryLists()", () => {
+    it("should return a list grocery lists that a user belongs to", (done) => {
+      GroceryListQueries.getGroceryLists(1, (err, lists) => {
+        if(err) {
+          console.log(err);
+          done();
+        }
+        else {
+          console.log(lists);
+          expect(lists).toBeDefined();
+          done();
         }
       });
     });
