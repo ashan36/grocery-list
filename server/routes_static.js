@@ -2,23 +2,23 @@ const express = require("express");
 const router = express.Router();
 const userQueries = require('../db/queries/userqueries.js');
 
-router.get("/", (req, res) => {//serve react app page
-  res.sendFile(path.join(__dirname, '../build', 'index.html'));
-});
-
 router.post("/sigin", (req, res, next) => { //respond to POST request from signin component
-    passport.authenticate("local"), (req, res, function () {
+    console.log("sign in request");
+
+    passport.authenticate("local") (req, res, function () {
       if(!req.user){
         req.flash("notice", "Sign in failed. Please try again.");
-        res.json({status: 'fail'});
+        res.redirect('/');
       } else {
         req.flash("notice", "You've successfully signed in!");
-        res.json({status: 'success'});
+        res.redirect('/');
       }
     })
 });
 
 router.post("/newuser", (req, res, next) => { //respond to POST request from newuser component
+  console.log("new user request");
+
   let newUser = {
     email: req.body.email,
     handle: req.body.handleName,
@@ -29,11 +29,12 @@ router.post("/newuser", (req, res, next) => { //respond to POST request from new
   userQueries.createUser(newUser, (err, user) => {
     if(err) {
       req.flash("error", err);
+      res.redirect('/');
     }
     else {
       passport.Authenticate("local"), (req, res, () => {
         req.flash("notice", "Sign in successful");
-        res.json({status: 'success'});
+        res.redirect('/');
       });
     }
   });
