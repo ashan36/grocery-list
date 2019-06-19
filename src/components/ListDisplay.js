@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { getLists } from '../SocketHandler';
 
 class ListDisplay extends Component {
   constructor(props) {
@@ -10,12 +11,26 @@ class ListDisplay extends Component {
   }
 
   componentDidMount() {
-
+    getLists(this.props.userId, (data) => {
+      
+    })
   }
 
   render() {
     return (
-      <p>Display Grocery List Here</p>
+      <table>
+        <tbody>
+          {
+            this.state.lists.map( (value, index) => {
+              return (
+                <tr className="ListItemRow" key={value.id}>
+                  <td className="ListItemCell">{value.listName}</td>
+                </tr>
+              )
+            })
+          }
+        </tbody>
+      </table>
     )
   }
 }

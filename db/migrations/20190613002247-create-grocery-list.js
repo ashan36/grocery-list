@@ -25,6 +25,10 @@ module.exports = {
       createdBy: {
         allowNull: false,
         type: Sequelize.INTEGER
+      },
+      UserId: {
+        allowNull: true,
+        type: Sequelize.ARRAY(Sequelize.INTEGER)
       }
     });
   },

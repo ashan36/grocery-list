@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    GroceryListId: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
+      allowNull: true
+    }
 
   }, {});
   User.associate = function(models) {

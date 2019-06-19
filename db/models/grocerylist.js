@@ -4,6 +4,10 @@ module.exports = (sequelize, DataTypes) => {
     listName: DataTypes.STRING,
     active: DataTypes.BOOLEAN,
     createdBy: DataTypes.INTEGER,
+    UserId: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
+      allowNull: true
+    }
   }, {});
   GroceryList.associate = function(models) {
     // associations can be defined here

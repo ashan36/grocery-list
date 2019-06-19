@@ -31,6 +31,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
+      GroceryListId: {
+        allowNull: true,
+        type: Sequelize.ARRAY(Sequelize.INTEGER)
+      }
 
     });
   },

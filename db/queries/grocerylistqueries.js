@@ -1,6 +1,7 @@
 const User = require("../models").User;
 const GroceryList = require("../models").GroceryList;
 const ListItems = require("../models").ListItems;
+const Sequelize = require("sequelize");
 
 module.exports = {
 
@@ -24,7 +25,10 @@ module.exports = {
       include: [{
         model: GroceryList,
         through: {
-          where: {GroceryListId: targetListId}
+          where: { GroceryListId: {
+              [Sequelize.Op.any]: [targetListId]
+            }
+          }
         }
       }]
     })
@@ -42,7 +46,10 @@ module.exports = {
       include: [{
         model: User,
         through: {
-          where: {UserId: targetUserId}
+          where: { UserId: {
+            [Sequelize.Op.any]: [targetUserId]
+            }
+          }
         }
       }]
     })
@@ -53,5 +60,5 @@ module.exports = {
       callback(err);
     })
   },
-  
+
 }
