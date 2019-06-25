@@ -6,52 +6,68 @@ module.exports = {
 eventConfig (socket) {
     console.log("Client connected");
 
-    socket.on('getGLists', (userId) => {
+    socket.on('getGLists', (userId, callback) => {//send array of Glist objects
       var lists = listQueries.getGroceryLists(userId, (err, lists) => {
         if (err) {
           console.log(err);
+          callback("Get list failed");
         }
         else {
           var listData = [];
           for (var i = 0; i < lists.length; i++) {
-            listData.push(lists[i].id);
-            listData.push(lists[i].listName);
+            listData.push({id: lists[i].id, listName: lists[i].listName});
           }
-          socket.emit('gListResponse', {data: listData});
+          callback(listData);
         }
       });
     });
 
-    socket.on('getGlistItems', (list) => {
-      var roomName = list.id.concat(list.name);
-      var items = listQueries.getAllItems(list.id, (err, items) => {
+    socket.on('createNewList', (listName, userId, callback) => {
+      listQueries.
+    });
+
+    socket.on('deleteList', (listId) => {
+
+    });
+
+    socket.on('addListUser', (email, callback) => {
+
+    });
+
+    socket.on('unsubscribeFromList', (roomName) => {
+
+    });
+
+    socket.on('getListItems', (listId, roomName, callback) => {
+      var items = listQueries.getAllItems(listId, (err, items) => {
         if (err) {
           console.log(err);
+          callback("Get list items failed");
         }
         else {
           var itemData = [];
           for (var i = 0; i < items.length; i++) {
-            itemData.push(items[i].id);
-            itemData.push(items[i].itemName);
-            itemData.push(items[i].complete);
+            itemData.push({id: items[i].id, itemName: items[i].itemName, complete: items[i].complete});
           }
+          callback(itemData);
+          socket.join(roomName);
         }
       });
-
-      socket.join(roomName, () => {
-        socket.to(roomName).emit('listItemsResponse', {data: itemData});
-      });
     });
 
-    socket.on('listItemDelete', (data) => {
-      var roomName = data.listId.concat(data.listName);
+    socket.on('createListItem', (listItem, roomName, callback) => {
+      //run query to create
+      //callback with request status message
+    });
+
+    socket.on('deleteListItem', (itemId, roomName, callback) => {
       //run query to delete
-      //run new query to get updated list
-      //emit to the room
+      //callback with request status message
     });
 
-    socket.on('listItemAdd', (data) => {
+    socket.on('updateListItem', (listItem, roomName, callback) => {
 
     });
+
   }
 }

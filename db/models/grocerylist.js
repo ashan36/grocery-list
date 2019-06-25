@@ -6,13 +6,15 @@ module.exports = (sequelize, DataTypes) => {
     createdBy: DataTypes.INTEGER,
     UserId: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
-      allowNull: true
+      allowNull: true,
+      defaultValue: []
     }
   }, {});
   GroceryList.associate = function(models) {
     // associations can be defined here
     GroceryList.belongsToMany(models.User, {
-      through: "UsersLists"
+      through: "UsersLists",
+      foreignKey: "UserId"
     });
     GroceryList.hasMany(models.ListItems, {
       foreignKey: "listId",

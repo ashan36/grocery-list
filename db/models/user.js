@@ -16,14 +16,16 @@ module.exports = (sequelize, DataTypes) => {
     },
     GroceryListId: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
-      allowNull: true
+      allowNull: true,
+      defaultValue: []
     }
 
   }, {});
   User.associate = function(models) {
     // associations can be defined here
     User.belongsToMany(models.GroceryList, {
-      through: "UsersLists"
+      through: "UsersLists",
+      foreignKey: "GroceryListId"
     });
   };
   return User;

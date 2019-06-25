@@ -6,6 +6,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        unique: true,
         type: Sequelize.INTEGER
       },
       handle: {
@@ -33,7 +34,8 @@ module.exports = {
       },
       GroceryListId: {
         allowNull: true,
-        type: Sequelize.ARRAY(Sequelize.INTEGER)
+        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        defaultValue: []
       }
 
     });

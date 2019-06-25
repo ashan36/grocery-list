@@ -6,6 +6,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        unique: true,
         type: Sequelize.INTEGER
       },
       listName: {
@@ -28,7 +29,8 @@ module.exports = {
       },
       UserId: {
         allowNull: true,
-        type: Sequelize.ARRAY(Sequelize.INTEGER)
+        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        defaultValue: []
       }
     });
   },
