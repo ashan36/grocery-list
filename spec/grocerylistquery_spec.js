@@ -127,8 +127,7 @@ beforeEach((done) => {
 
 
 describe("GroceryListQueries", () => {
-
-/*
+  
   describe("#getAllItems()", () => {
     it("should return a list of items belonging to the grocerylist", (done) => {
       GroceryListQueries.getAllItems(1, (err, items) => {
@@ -178,8 +177,6 @@ describe("GroceryListQueries", () => {
     });
   });
 
-    */
-
   describe("#addUserToList()", () => {
     it("should add a user id to a grocery list's UserId array field", (done) => {
       GroceryListQueries.addUserToList(2, 1, (err, rows) => {
@@ -210,16 +207,15 @@ describe("GroceryListQueries", () => {
     });
   });
 
-
   describe("#removeUserFromList()", () => {
     it("should find a remove a user id from a grocery list's UserId array field", (done) => {
-      GroceryListQueries.removeUserFromList(1, 1, (err, success) => {
+      GroceryListQueries.removeUserFromList(1, 1, (err, rows) => {
         if(err) {
           console.log(err);
           done();
         }
         else {
-          expect(success).toBe(false);
+          expect(rows[0]).toBe(1);
           done();
         }
       });
@@ -228,30 +224,28 @@ describe("GroceryListQueries", () => {
 
   describe("#removeListFromUser()", () => {
     it("should find a remove a grocery list id from a user's GroceryListId array field", (done) => {
-      GroceryListQueries.removeListFromUser(1, 1, (err, success) => {
+      GroceryListQueries.removeListFromUser(2, 1, (err, rows) => {
         if(err) {
           console.log(err);
           done();
         }
         else {
-          expect(success).toBe(false);
+          expect(rows[0]).toBe(1);
           done();
         }
       });
     });
   });
 
-
-/*
   describe("#deleteList()", () => {
     it("should soft delete the appropriate row from the GroceryList table", (done) => {
-      GrcoeryListQueries.deleteList(1, (err, rows) => {
+      GroceryListQueries.deleteList(1, (err, rows) => {
         if(err) {
           console.log(err);
           done();
         }
         else {
-          expect(success).toBe(1);
+          expect(rows).toBe(1);
           done();
         }
       });
@@ -260,13 +254,13 @@ describe("GroceryListQueries", () => {
 
   describe("#deleteListItem()", () => {
     it("should soft delete the appropriate row from the ListItems table", (done) => {
-      GrcoeryListQueries.deleteListItem(1, (err, rows) => {
+      GroceryListQueries.deleteListItem(1, (err, rows) => {
         if(err) {
           console.log(err);
           done();
         }
         else {
-          expect(success).toBe(1);
+          expect(rows).toBe(1);
           done();
         }
       });
@@ -274,20 +268,23 @@ describe("GroceryListQueries", () => {
   });
 
   describe("#updateListItem()", () => {
-    var newItem = {
-      id: 1,
-      complete: true
-    }
-    GroceryListQueries.updateListItem(newItem, (err, rows) => {
-      if(err) {
-        console.log(err);
-        done();
+    it("Should update a list item using an item list object and return 1 in an array", (done) => {
+      var newItem = {
+        id: 2,
+        itemName: "Item1-2",
+        complete: true,
+        listId: 1
       }
-      else {
-        expect(rows).toBe(1);
-        done();
-      }
+      GroceryListQueries.updateListItem(newItem, (err, rows) => {
+        if(err) {
+          console.log(err);
+          done();
+        }
+        else {
+          expect(rows[0]).toBe(1);
+          done();
+        }
+      });
     });
   });
-*/
 });

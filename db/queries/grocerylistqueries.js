@@ -141,7 +141,7 @@ module.exports = {
       }
       else {
         listUsers.splice(userIndex, 1);
-        return GroceryList.upsert({id: gListId, UserId: listUsers}, {fields: ['UserId']}).then((status) => {callback (null, status)}).catch((err) => {callback(err)}); //change to update
+        return GroceryList.update({UserId: listUsers}, {where: {id: gListId}}).then((rows) => {callback (null, rows)}).catch((err) => {callback(err)});
       }
     }
   },
@@ -164,7 +164,7 @@ module.exports = {
       }
       else {
         userLists.splice(listIndex, 1);
-        return User.upsert({id: userId, GroceryListId: userLists}, {fields: ['GroceryListId']}).then((status) => {callback (null, status)}).catch((err) => {callback(err)}); //change to update
+        return User.update({GroceryListId: userLists}, {where: {id: userId}}).then((rows) => {callback (null, rows)}).catch((err) => {callback(err)});
       }
     }
   },
@@ -198,7 +198,7 @@ module.exports = {
   },
 
   updateListItem: (listItem, callback) => {
-    return ListItems.upsert({listItem}).then((success) => {callback(null, success)}).catch((err) => {callback(err)});
+    return ListItems.update(listItem, {where: {id: listItem.id}}).then((rows) => {callback(null, rows)}).catch((err) => {callback(err)});
   }
 
 }

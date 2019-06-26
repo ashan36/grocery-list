@@ -19,8 +19,8 @@ export class SocketHandler {
   }
 
   createList(listName, callback) {
-    this.socket.emit('createNewList', listName, (message) => {
-      callback(message);
+    this.socket.emit('createNewList', listName, (data) => {
+      callback(data);
     });
   }
 
@@ -30,8 +30,14 @@ export class SocketHandler {
     };
   }
 
-  addListUser(email, callback) {
+  addListUser(email, listId, callback) {
     this.socket.emit('addListUser', email, (message) => {
+      callback(message);
+    });
+  }
+
+  removeListUser(userId, listId, callback) {
+    this.socket.emit('removeListUser', userId, listId, (message) => {
       callback(message);
     });
   }
