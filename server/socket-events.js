@@ -7,9 +7,13 @@ module.exports = {
 
 eventConfig (socket) {
     console.log("Client connected");
+    socket.on('signIn', (email) => {
+      console.log("User joined room " + email);
+      socket.join(email);
+    });
 
     socket.on('getGLists', (userId, callback) => {//send array of Glist objects
-      var lists = listQueries.getGroceryLists(userId, (err, lists) => {
+      listQueries.getGroceryLists(userId, (err, lists) => {
         if (err) {
           console.log(err);
           callback("Get list failed");
@@ -17,9 +21,11 @@ eventConfig (socket) {
         else {
           var listData = [];
           for (var i = 0; i < lists.length; i++) {
-            listData.push({id: lists[i].id, listName: lists[i].listName});
+            var roomName = "" + lists[i].id + "_" + lists[i].listName;
+            listData.push({id: lists[i].id, listName: lists[i].listName, createdBy: lists[i].createdBy, roomName: roomName});
+            socket.join(roomName);
           }
-          callback(listData);
+          callback(false, listData);
         }
       });
     });
@@ -31,97 +37,146 @@ eventConfig (socket) {
           callback("Create new list failed");
         }
         else {
-          var listObject = {id: gList.id, listName: gList.listName, createdBy: gList.createdBy};
-          callback(listObject);
+          var roomName = "" + gList.id + "_" + gList.listName;
+          var listObject = {id: gList.id, listName: gList.listName, createdBy: gList.createdBy, roomName: roomName};
+          callback("Created list succcesfully", listObject);
+          listQueries.addListToUser(userId, gList.id, (err, rows) => {
+            if(err || rows[0] === 0) {
+              console.log(err);
+            }
+          });
         }
       });
     });
 
-    socket.on('deleteList', (listId) => {
+    socket.on('deleteGList', (listId, roomName, callback) => {
+      listQueries.clearAllListUsers(listId, (message, success) => {
+        if(success === false) {
+          callback("Clear Users Failed", false);
+        }
+      });
+
       listQueries.deleteList(listId, (err, rows) => {
         if(err) {
           console.log(err);
-          callback("Delete Failed");
+          callback("Delete Failed", false);
         }
         else {
-          callback("Deleted " + rows + " lists");
+          callback("Deleted " + rows + " lists", true);
+          socket.to(roomName).emit('dataUpdate', {op: "deletelist", listId: listId});
+          socket.leave(roomName);
         }
-      })
+      });
+      listQueries.clearAllListItems(listId);
     });
 
-    socket.on('addListUser', (email, listId, callback) => {
-      var user;
-      userQueries.getUserByEmail(email, (err, res) => {
+    socket.on('updateGList', (gList, userId, roomName, callback) => {
+      listQueries.updateGList(gList, userId, (err, rows) => {
         if(err) {
           console.log(err);
-          callback("Could not find user with email: " + email);
+          callback(err, false);
+        }
+        else {
+          callback("List Updated", true);
+          socket.to(roomName).emit('dataUpdate', {op: "updatelist", gList: gList})
+        }
+      });
+    });
+
+    socket.on('getListMembers', (listId, callback) => {
+      listQueries.getUserMembers(listId, (err, users) => {
+        if(err) {
+          console.log(err);
+          callback(err, false);
+        }
+        else {
+          var userData = [];
+          for (var i = 0; i < users.length; i++) {
+            userData.push({id: users[i].id, handle: users[i].handle});
+          }
+          callback(false, userData);
+        }
+      });
+    });
+
+    socket.on('addListUser', (email, listId, roomName, callback) => {
+      userQueries.getUserByEmail(email, (err, user) => {
+        if(err) {
+          console.log(err);
+          callback("Could not find user with email: " + email, false);
           return;
         }
         else {
-          user = res;
+          listQueries.addUserToList(listId, user.id, (err, rows) => {
+            if(err) {
+              console.log(err);
+              callback(err);
+              return;
+            }
+            else if(rows[0] === 0) {
+              callback("User already a member of list", false);
+              return;
+            }
+          });
+          listQueries.addListToUser(user.id, listId, (err, rows) => {
+            if(err) {
+              console.log(err);
+              callback(err);
+              return;
+            }
+            else if(rows[0] === 0) {
+              callback("User already a member of list", false);
+              return;
+            }
+            else {
+              callback("User successfully added", {id: user.id, handle: user.handle});
+              socket.to(roomName).emit('dataUpdate', {op: "addmember", newUser: {id: user.id, handle: user.handle}});
+              socket.to(user.email).emit('dataUpdate', {op: "sharelist"});
+            }
+          });
         }
       });
-
-      listQueries.addUserToList(listId, user.id, (err, rows) => {
-        if(err) {
-          console.log(err);
-          callback(err);
-          return;
-        }
-        else if(rows[0] === 0) {
-          callback("User already a member of list");
-          return;
-        }
-      });
-
-      listQueries.addListToUser(user.id, listId, (err, rows) => {
-        if(err) {
-          console.log(err);
-          callback(err);
-          return;
-        }
-        else if(rows[0] === 0) {
-          callback("User already a member of list");
-          return;
-        }
-      });
-
-      callback("User successfully added");
     });
 
-    socket.on('removeListUser', (userId, listId, callback) => {
+    socket.on('removeListUser', async (userId, listId, roomName, callback) => {
       listQueries.removeUserFromList(listId, userId, (err, rows) => {
         if(err) {
           console.log(err);
-          callback(err);
+          callback(err, false);
           return;
         }
         else if(rows[0] === 0) {
-          callback("User is already not a member of list");
+          callback("User is already not a member of list", false);
           return;
         }
       });
-
       listQueries.removeListFromUser(userId, listId, (err, rows) => {
         if(err) {
           console.log(err);
-          callback(err);
+          callback(err, false);
           return;
         }
         else if(rows[0] === 0) {
-          callback("User is already not a member of list");
+          callback("User is already not a member of list", false);
           return;
         }
-        callback("User successfully removed");
       });
-    })
-
-    socket.on('unsubscribeFromList', (roomName) => {
-      socket.leave(roomName, (err) => {console.log(err);});
+      callback("User successfully removed", true);
+      socket.to(roomName).emit('dataUpdate', {op: "removemember", removedUserId: userId, removedListId: listId});
     });
 
-    socket.on('getListItems', (listId, roomName, callback) => {
-      listQueries.getAllItems(listId, (err, items) => {
+    socket.on('subscribeToList', (roomName) => {
+      console.log("subscribing to " + roomName);
+      socket.join(roomName, (err) => {if(err) {console.log(err);}});
+    });
+
+    socket.on('unsubscribeFromList', (roomName) => {
+      console.log("unsubscribing from " + roomName);
+      socket.leave(roomName, (err) => {if(err) {console.log(err);}});
+    });
+
+    socket.on('getListItems', (listId, callback) => {
+      listQueries.getListItems(listId, (err, items) => {
         if (err) {
           console.log(err);
           callback("Get list items failed");
@@ -131,8 +186,7 @@ eventConfig (socket) {
           for (var i = 0; i < items.length; i++) {
             itemData.push({id: items[i].id, itemName: items[i].itemName, complete: items[i].complete});
           }
-          callback(itemData);
-          socket.join(roomName);
+          callback("Get list successful", itemData);
         }
       });
     });
@@ -141,11 +195,13 @@ eventConfig (socket) {
       listQueries.createListItem(listItem, (err, newItem) => {
         if(err) {
           console.log(err);
-          callback(err, false);
+          callback(err, null);
+          return;
         }
         else {
-          callback(null, true);
-          socket.to(roomName).emit('listUpdate', {oldItem: null, newItem: newItem, op:"create"});
+          var itemData = {id: newItem.id, itemName: newItem.itemName, complete: newItem.complete};
+          callback("Item created", itemData);
+          socket.to(roomName).emit('dataUpdate', {op:"createitem", newItem: itemData});
         }
       });
     });
@@ -155,11 +211,14 @@ eventConfig (socket) {
         if(err) {
           console.log(err);
           callback(err, false);
+          return;
         }
-        else {
-          callback("Deleted " + rows + " lists", true);
-          socket.to(roomName).emit('listUpdate', {oldItem: listItem, newItem: null, op:"delete"});
+        else if (rows[0] === 0) {
+          callback("Item delete failed", false);
+          return;
         }
+        callback("Item deleted", true);
+        socket.to(roomName).emit('dataUpdate', {op: "deleteitem", oldItemId: itemId});
       });
     });
 
@@ -168,10 +227,14 @@ eventConfig (socket) {
         if(err) {
           console.log(err);
           callback(err, false);
+          return;
         }
-        else {
-          callback("Item Updated", true);
-          socket.to(roomName).emit('listUpdate', {oldItem: null, newItem: listItem, op:"update"});
+        else if (rows[0] === 0) {
+          callback("List update failed", false);
+          return;
+        }
+        callback("Item Updated", true);
+        socket.to(roomName).emit('dataUpdate', {op: "updateitem", newItem: listItem});
       });
     });
   }

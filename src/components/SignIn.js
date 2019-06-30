@@ -26,6 +26,11 @@ class SignIn extends Component {
           displaySignInForm: true,
         });
       }
+      else {
+        this.setState({
+          displaySignInForm: false,
+        });
+      }
     }
   }
 
@@ -45,8 +50,9 @@ class SignIn extends Component {
          displaySignInForm: false
        });
        response.json().then((data) => {
-         this.props.signIn(data.handleName, data.userId);
+         this.props.signIn(data.handleName, data.userId, data.email);
        })
+       .catch((err) => {console.log(err);});
       }
     });
   }
@@ -64,11 +70,13 @@ class SignIn extends Component {
      else {
        console.log(response);
        this.setState({
-         displaySignInForm: false
+         displaySignInForm: false,
+         displayNewUserForm: false,
        });
        response.json().then((data) => {
-          this.props.signIn(data.handleName, data.userId);
+          this.props.signIn(data.handleName, data.userId, data.email);
        })
+       .catch((err) => {console.log(err);});
      }
    });
  }
@@ -96,14 +104,12 @@ class SignIn extends Component {
 
   render() {
     let button;
-    let submit;
     let form;
-    let formVisibility = this.state.displaySignInForm ? {} : { visibility: "hidden" };
     let cancelVisibility = this.state.displayNewUserForm ? {} : { visibility: "hidden" };
 
     if (this.props.signedIn) {
       button = <button id="sign-out-button"
-        onClick={this.props.signOut}
+        onClick={(e) => this.props.signOut(e)}
         onMouseEnter={() => this.mouseEnter()}
         onMouseLeave={() => this.mouseLeave()}>
         {(this.state.buttonHover) ? ("Sign-Out") : (this.props.handleName)}
@@ -118,7 +124,7 @@ class SignIn extends Component {
 
       if (this.state.displayNewUserForm) {
         form =
-          <form id="signin-form" onSubmit={(e) => this.handleNewUser(e)} style={formVisibility}>
+          <form id="signin-form" onSubmit={(e) => this.handleNewUser(e)}>
             <label htmlFor="email-input">Enter a valid email address</label>
             <input id="email-input" name="username" type="email"/>
             <label htmlFor="password-input">Enter your password</label>
@@ -130,15 +136,18 @@ class SignIn extends Component {
             <input id="submit-input" type="submit" value="Submit"/>
           </form>
       }
-      else {
+      else if (!this.state.displayNewUserForm && this.state.displaySignInForm) {
         form =
-          <form id="signin-form" onSubmit={(e) => this.handleSignIn(e)} style={formVisibility}>
+          <form id="signin-form" onSubmit={(e) => this.handleSignIn(e)}>
             <label htmlFor="email-input">Enter a valid email address</label>
             <input id="email-input" name="username" type="email"/>
             <label htmlFor="password-input">Enter your password</label>
             <input id="password-input" name="password" type="password"/>
             <input id="submit-input" type="submit" value="Submit"/>
           </form>
+      }
+      else {
+        form = <span></span>
       }
           return (
           <div>

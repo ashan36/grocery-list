@@ -9,7 +9,7 @@ module.exports = {
     return GroceryList.findOne({where: {id: gListId}}).then((list) => {callback(null, list)}).catch((err) => {callback(err)});
   },
 
-  getAllItems: (targetlistId, callback) => {
+  getListItems: (targetlistId, callback) => {
     return ListItems.findAll({
       where: {
         listId: targetlistId
@@ -25,7 +25,7 @@ module.exports = {
 
   getUserMembers: (targetListId, callback) => {
     return User.findAll({
-      attributes: ['handle'],
+      attributes: ['id', 'handle'],
       where: { GroceryListId: {
           [Sequelize.Op.contains]: [targetListId]
         }
@@ -41,7 +41,7 @@ module.exports = {
 
   getGroceryLists: (targetUserId, callback) => {
     return GroceryList.findAll({
-      attributes: ['id', "listName"],
+      attributes: ['id', "listName", 'createdBy'],
       where: { UserId: {
         [Sequelize.Op.contains]: [targetUserId]
         }
@@ -60,14 +60,18 @@ module.exports = {
       listName: listName,
       active: true,
       createdBy: userId,
-      UserIds: [userId]
+      UserId: [userId]
     })
     .then((gList) => {
-      callback(null, glist);
+      callback(null, gList);
     })
     .catch((err) => {
       callback(err);
     });
+  },
+
+  updateGList: (gList, userId, callback) => {
+    return GroceryList.update(gList, { where: {id: gList.id, createdBy: userId} }).then((rows) => {callback(null, rows)}).catch((err) => {callback(err)});
   },
 
   addUserToList: async (gListId, userId, callback) => {
@@ -122,6 +126,45 @@ module.exports = {
     });
   },
 
+  clearAllListUsers: async (gListId, callback) => {
+    var listUsers = await User.findAll({
+      attributes: ['id', 'GroceryListId'],
+      where: { GroceryListId: {
+          [Sequelize.Op.contains]: [gListId]
+        }
+      }
+    })
+    .then((users) => {
+        return users;
+    })
+    .catch((err) => {
+      console.log(err);
+      return null;
+    })
+    var userLists = [];
+    var listIndex = null;
+
+    if(listUsers === null) {
+      callback("Did not find any members of that list", false);
+      return;
+    }
+    else {
+      for (var i = 0; i < listUsers.length; i++) {
+        userLists = listUsers[i].GroceryListId;
+        listIndex = userLists.findIndex((value) => {return (value === gListId)});
+        if (listIndex === -1) {
+          continue;
+        }
+        else {
+          userLists.splice(listIndex, 1);
+          listUsers[i].update({GroceryListId: userLists}).then((model) => {return;}).catch((err) => {console.log(err);});
+        }
+      }
+      callback("Users cleared", true);
+    }
+  },
+
+
   removeUserFromList: async (gListId, userId, callback) => {
     var gList = await GroceryList.findOne({where: {id: gListId}}).then((list) => {return list;}).catch((err) => {console.log(err); return null;});
 
@@ -141,7 +184,7 @@ module.exports = {
       }
       else {
         listUsers.splice(userIndex, 1);
-        return GroceryList.update({UserId: listUsers}, {where: {id: gListId}}).then((rows) => {callback (null, rows)}).catch((err) => {callback(err)});
+        return gList.update({UserId: listUsers}).then((model) => {callback (null, model)}).catch((err) => {callback(err)});
       }
     }
   },
@@ -164,7 +207,7 @@ module.exports = {
       }
       else {
         userLists.splice(listIndex, 1);
-        return User.update({GroceryListId: userLists}, {where: {id: userId}}).then((rows) => {callback (null, rows)}).catch((err) => {callback(err)});
+        return user.update({GroceryListId: userLists}).then((model) => {callback (null, model)}).catch((err) => {callback(err)});
       }
     }
   },
@@ -195,6 +238,10 @@ module.exports = {
     else {
       return listItem.destroy().then((rows) => {callback(null, rows);}).catch((err) => { callback(err); });
     }
+  },
+
+  clearAllListItems: (listId) => {
+    return ListItems.destroy({where: {listId: listId}}).then((rows) => {console.log("Deleted " + rows + " items")}).catch((err) => console.log(err));
   },
 
   updateListItem: (listItem, callback) => {

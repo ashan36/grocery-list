@@ -7,6 +7,15 @@ const formParser = require('./formParser.js');
 const User = require("../db/models").User;
 const bcrypt = require("bcryptjs");
 
+router.post("/loggedIn", (req, res) => { //request is made on page refresh to check if a session already exists.
+  if(req.isAuthenticated()) {
+    return res.json({ success: true, message: "Login Successful", handleName: req.user.handle, userId: req.user.id, email: req.user.email});
+  }
+  else {
+    return res.json({ success: false, message: "No session found"});
+  }
+});
+
 router.post("/signin", formParser.parseSignIn, (req, res, next) => { //respond to POST request from signin component
   console.log("sign in request");
 
@@ -36,7 +45,7 @@ router.post("/signin", formParser.parseSignIn, (req, res, next) => { //respond t
     else {
       req.login(user, function(err) {
         if (err) {return next(err); }
-        return res.json({ success: true, message: "Login Successful", handleName: user.handle, userId: user.id});
+        return res.json({ success: true, message: "Login Successful", handleName: user.handle, userId: user.id, email: user.email});
       });
     }
   });
@@ -56,7 +65,7 @@ router.post("/newuser", formParser.parseNewUser, (req, res, next) => { //respond
       console.log("no error, moving to authenticate");
       req.login(user, function(err) {
         if (err) { return next(err); }
-        return res.json({ success: true, message: "Login Successful", handleName: user.handle, userId: user.id});
+        return res.json({ success: true, message: "Login Successful", handleName: user.handle, userId: user.id, email: user.email});
       });
     }
   });

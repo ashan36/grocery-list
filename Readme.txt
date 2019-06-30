@@ -7,30 +7,29 @@ Frontend - React
 Deployment - Heroku
 TTD - Jasmine
 
-1. Setup environment - done
-2. Rudimentary React components for views - done
-3. Setup ORM model and DB - done and tested
-4. Write module to provide methods to interact with database (CRUD query interface) - done and tested
-5. Authenticate users - done and tested
-6. Setup real time syncing with Socket.io - done
-7. Complete the UI features - ongoing
-8. Deploy
-
 Socket.io Events
-Listen Events
-getGLists (userId, ack(message, [data]))
-createNewList (listName, userId, ack(message, data))
-deleteList (listId, ack(message, boolean))
-addListUser (email, listId, ack(message, boolean))
-removeListUser (userId, listId, ack(message, boolean))
-unsubscribeFromList (roomName)
-getListItems (listId, roomName, ack(message, [data]))
-createListItem (listItem, roomName, ack(message, boolean))
-deleteListItem (itemId, roomName, ack(message, boolean))
-updateListItem (listItem, roomName, ack(message, boolean))
+  Listen Events
+    getGLists (userId, ack(message, [data]))
+    getListMembers (listId, ack(message, [data]))
+    createNewList (listName, userId, ack(message, data))
+    deleteGList (listId, roomName, ack(message, boolean))
+    updateGList (gList, userId, roomName, ack(message, boolean))
+    addListUser (email, listId, roomName, ack(message, boolean || data))
+    removeListUser (userId, listId, roomName, ack(message, boolean))
+    subscribeToList (roomName)
+    unsubscribeFromList (roomName)
+    getListItems (listId, ack(message, [data]))
+    createListItem (listItem, roomName, ack(message, data))
+    deleteListItem (itemId, roomName, ack(message, boolean))
+    updateListItem (listItem, roomName, ack(message, boolean))
 
-Emit Events
-listUpdate (dataObj) //see possible data objects below
-if update {oldItem: null, newItem: listItem, op: "update"}
-if delete {oldItem: listItem, newItem: null, op: "delete"}
-if create {oldItem: null, newItem: listItem, op: "create"}
+  Emit Events
+    dataUpdate (dataObj) //see possible data objects below
+      item updated {op: "updateitem", newItem: listItem}
+      item deleted {op: "deleteitem", oldItemId: id}
+      item created {op: "createitem", newItem: listItem}
+      member added {op: "addmember", newUser: user}
+      member removed {op: "removemember", removedUserId: userId, removedListId: listId}
+      list updated { op: "updatelist", gList: gList}
+      list deleted {op: "deletelist", listId: id}
+      list shared {op: "sharelist"} //trigger a list refresh

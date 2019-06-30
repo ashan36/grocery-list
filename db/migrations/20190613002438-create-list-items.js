@@ -25,6 +25,7 @@ module.exports = {
       listId: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        onDelete: "CASCADE",
       }
     });
   },

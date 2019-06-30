@@ -24,12 +24,6 @@ server.on("listening", () => {
   console.log(`server is listening for requests on port ${server.address().port}`);
 });
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.on('socket message', (msg) => {
-    console.log('message: ' + msg);
-  });
-});
-//io.on('connection', (socket) => socketEvents.eventConfig(socket));
+io.on('connection', (socket) => socketEvents.eventConfig(socket));
 
 server.listen(port);

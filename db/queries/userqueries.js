@@ -5,6 +5,7 @@ module.exports = {
   createUser: (newUser, callback) => {
     const salt = bcrypt.genSaltSync();
     const hashedPassword = bcrypt.hashSync(newUser.password, salt);
+    newUser.username = newUser.username.toLowerCase();
     console.log("From createUser");
     console.log(newUser);
 
@@ -23,6 +24,7 @@ module.exports = {
   },
 
   getUserByEmail: (email, callback) => {
+    email = email.toLowerCase();
     return User.findOne({where: {email: email}}).then((user) => { callback(null, user) }).catch((err) => { callback(err); });
   },
 
