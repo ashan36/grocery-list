@@ -36,6 +36,9 @@ export default class SocketHandler {
   }
 
   deregisterForUpdates(signature) {
+    console.log("Deregistering");
+    console.log(signature);
+    
     for (var i = 0; i < this.updateRegister.length; i++) {
       if(this.updateRegister[i].id === signature) {
         this.updateRegister.splice(i, 1);

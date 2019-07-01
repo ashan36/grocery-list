@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap');
+
+body {
+  background-color: #373536;
+  color: #5ca4ac;
+  font-family: 'Roboto Slab', serif !important;
+}
+
+h1 {
+  0.8em;
+  text-decoration: underline;
+}
+
+button {
+  background-color: #acb9c1;
+}
+
+.signin-form label {
+  display:block;
+  margin-right: 15px;
+}
+
+#signin-form {
+  margin-top: 30px;
+}
+
+#sign-in-submit-input, #sign-in-cancel-button {
+  font-size: 0.75em;
+  margin-right: 3px;
+  margin-top: 10px;
+}
+
+input {
+  background-color: #373536;
+  color: #5ca4ac;
+}
+
+table {
+  width: inherit;
+}
+
+thead {
+  color: #373536;
+  background-color: #5ca4ac;
+  font-size: 1.2em;
+}
+
+#list-display-table {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+::placeholder {
+  color: #acb9c1;
+}
+
+#list-edit-input {
+  width: 80%
+}
+
+#list-wrapper {
+  margin-bottom: 30px;
+}
+
+ul {
+  margin: 0px;
+  padding-left: 20px;
+  list-style-type: circle;
+}
+
+.g-list-cell {
+  font-size: 1.3em;
+}
+
+.item-name {
+  position: relative;
+}
+
+.item-edit-input {
+  width: 80%;
+}
+
+.icon {
+  background: none;
+  border: none;
+  color: #acb9c1;
+}
+
+.delete-button {
+  font-size: 0.7em;
+  vertical-align: top;
+}
+
+.icon:hover {
+  color: white;
+}
+
+#owner-remove-button {
+  visibility: hidden;
+}
+
+#new-list-button {
+  font-size: 1.1em;
+}
+
+#delete-list-button {
+  font-size: 0.6em;
+  vertical-align: top;
+}
+
+#new-item-button {
+  font-size: 1.5em;
+}

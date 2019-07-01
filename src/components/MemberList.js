@@ -21,16 +21,12 @@ class MemberList extends Component {
           listMembers: data,
         });
       this.props.socket.registerForUpdates(this.updateSig, (data) => this.receiveUpdate(data));
+      this.isOwnerCheck();
       }
       else {
         window.alert(message);
       }
     });
-    if(this.props.list.createdBy === this.props.user.id) {
-      this.setState({
-        isOwner: true,
-      })
-    }
   }
 
   componentDidUpdate(prevProps) {
@@ -40,6 +36,7 @@ class MemberList extends Component {
         this.setState({
           listMembers: data,
         });
+        this.isOwnerCheck();
         this.props.socket.deregisterForUpdates(this.updateSig)
         this.updateSig = "" + this.props.list.roomName + "memberList";
         this.props.socket.registerForUpdates(this.updateSig, (data) => this.receiveUpdate(data));
@@ -53,6 +50,19 @@ class MemberList extends Component {
 
   componentWillUnmount() {
     this.props.socket.deregisterForUpdates(this.updateSig);
+  }
+
+  isOwnerCheck() {
+    if(this.props.list.createdBy === this.props.user.id) {
+      this.setState({
+        isOwner: true,
+      });
+    }
+    else {
+      this.setState({
+        isOwner: false,
+      });
+    }
   }
 
   receiveUpdate(data) {
@@ -154,7 +164,7 @@ class MemberList extends Component {
         this.props.socket.removeListUser(userId, this.props.list.id, this.props.list.roomName, (message, success) => {
           if(success === true) {
             console.log("Removal complete, sending update up to List Display");
-            this.props.receiveUpdate({op: "deletelist", gList: this.props.list.id}); //send data to parent compoonent to delete this list locally.
+            this.props.receiveUpdate({op: "deletelist", listId: this.props.list.id}); //send data to parent compoonent to delete this list locally.
             return;
           }
           else {
@@ -175,10 +185,10 @@ class MemberList extends Component {
     <button id="share-user-button" onClick={() => this.toggleShareUser()}>Share</button>;
 
     return (
-      <div>
-        <table>
+      <div id="member-list-wrapper" className="col-lg-4">
+        <table id="member-list-table">
           <thead>
-            <th>Shared Users</th>
+            <th id="member-list-col-head">Shared Users</th>
           </thead>
           <tbody>
             {
@@ -187,21 +197,21 @@ class MemberList extends Component {
                 let removeUserButton;
                 if(this.state.isOwner) { //if owner, add a remove user button to all users on the list except the owner themselves.
                   if(value.id !== this.props.list.createdBy) {
-                    removeUserButton = <button className="remove-user-button" onClick={() => this.removeUser(value.id)}>Unshare</button>
+                    removeUserButton = <button className="delete-button icon ion-md-close" onClick={() => this.removeUser(value.id)}></button>
                   }
                   else {
-                    removeUserButton = <div></div>
+                    removeUserButton = <button id="owner-remove-button" className="remove-user-button icon ion-md-close"></button>
                   }
                 }
                 else if(value.id === this.props.user.id) { //is the currently logged in user on the list add a leave button to their own name.
-                  removeUserButton = <button id="leave-list-button" onClick={() => this.removeUser(value.id)}>Leave</button>
+                  removeUserButton = <button className="delete-button icon ion-md-close" onClick={() => this.removeUser(value.id)}></button>
                 }
 
                 return (
                   <tr className="member-row" key={value.id}>
                     <td className="member-cell">
-                      {memberName}
                       {removeUserButton}
+                      {memberName}
                     </td>
                   </tr>
                 )

@@ -82,10 +82,10 @@ class Main extends Component {
       displayList = this.state.signedIn ?  <ListDisplay socket={this.socket} user={this.state.user}/> : <div></div>
 
     return (
-      <div>
+      <main id="main-wrapper" className="container-fluid">
         <SignIn signedIn={this.state.signedIn} signIn={(handleName, userId, email) => this.signIn(handleName, userId, email)} signOut={(e) => this.signOut(e)} handleName={this.state.user.handleName}/>
         {displayList}
-      </div>
+      </main>
     )
   };
 }

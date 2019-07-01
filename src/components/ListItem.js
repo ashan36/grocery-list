@@ -105,8 +105,8 @@ class ListItem extends Component {
     let itemName = this.state.editItem ?
     <td className="item-name">
       <div className="item-edit-wrapper" onBlur={blurFn} autoFocus="true" >
-        <input className="item-edit-input" type="text" placeholder={this.props.item.itemName} value={this.state.newItemName} onChange= { (e) => this.handleValueChange(e) } onKeyPress={ (e) => this.validateKeyPress(e) }/>
-        <input className="item-delete" type="button" onClick={ () => this.deleteItem() } onMouseEnter={ () => this.deleteHover() } onMouseLeave={ () => this.deleteHover() } value="Delete"/>
+        <button className="delete-button icon ion-md-close" onClick={ () => this.deleteItem() } onMouseEnter={ () => this.deleteHover() } onMouseLeave={ () => this.deleteHover() } value="Delete"></button>
+        <input className="item-edit-input" type="text" maxLength="24" placeholder={this.props.item.itemName} value={this.state.newItemName} onChange= { (e) => this.handleValueChange(e) } onKeyPress={ (e) => this.validateKeyPress(e) }/>
       </div>
     </td> :
     <td className="item-name" onClick={() => this.showEdit()}>{this.props.item.itemName}</td>;

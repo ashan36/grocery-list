@@ -1,12 +1,3 @@
-Database - PostGRES
-ORM - Sequelize
-Backend - Node.js
-Static Route Handler - Express
-Client syncing - Socket.io
-Frontend - React
-Deployment - Heroku
-TTD - Jasmine
-
 Socket.io Events
   Listen Events
     getGLists (userId, ack(message, [data]))

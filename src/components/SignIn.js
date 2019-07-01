@@ -46,11 +46,16 @@ class SignIn extends Component {
       }
       else {
        console.log(response);
-       this.setState({
-         displaySignInForm: false
-       });
        response.json().then((data) => {
-         this.props.signIn(data.handleName, data.userId, data.email);
+         if(data.success) {
+            this.setState({
+              displaySignInForm: false
+            });
+            this.props.signIn(data.handleName, data.userId, data.email);
+          }
+          else {
+            window.alert("Sign in failed");
+          }
        })
        .catch((err) => {console.log(err);});
       }
@@ -60,6 +65,14 @@ class SignIn extends Component {
  handleNewUser(e) {
    console.log("handling new user");
    e.preventDefault();
+   let password = document.getElementById("password-input").value;
+   let passwordConf = document.getElementById("password-confirmation-input").value;
+
+   if(password !== passwordConf) {
+     window.alert("Passwords don't match");
+     return;
+   }
+
    let formData = new FormData(e.target);
    let request = new Request('/newuser', {method: 'POST', credentials: 'include', body: formData});
 
@@ -69,12 +82,17 @@ class SignIn extends Component {
      }
      else {
        console.log(response);
-       this.setState({
-         displaySignInForm: false,
-         displayNewUserForm: false,
-       });
        response.json().then((data) => {
-          this.props.signIn(data.handleName, data.userId, data.email);
+         if(data.success) {
+            this.setState({
+              displaySignInForm: false,
+              displayNewUserForm: false
+            });
+            this.props.signIn(data.handleName, data.userId, data.email);
+          }
+          else {
+            window.alert("Sign in failed");
+          }
        })
        .catch((err) => {console.log(err);});
      }
@@ -105,7 +123,6 @@ class SignIn extends Component {
   render() {
     let button;
     let form;
-    let cancelVisibility = this.state.displayNewUserForm ? {} : { visibility: "hidden" };
 
     if (this.props.signedIn) {
       button = <button id="sign-out-button"
@@ -124,36 +141,84 @@ class SignIn extends Component {
 
       if (this.state.displayNewUserForm) {
         form =
-          <form id="signin-form" onSubmit={(e) => this.handleNewUser(e)}>
-            <label htmlFor="email-input">Enter a valid email address</label>
-            <input id="email-input" name="username" type="email"/>
-            <label htmlFor="password-input">Enter your password</label>
-            <input id="password-input" name="password" type="password"/>
-            <label htmlFor="password-confirmation-input">Confirm Password</label>
-            <input id="password-confirmation-input" name="password-confirmation" type="password"/>
-            <label htmlFor="handle-name-input">Choose a handle name</label>
-            <input id="handle-name-input" name="handleName" type="text"/>
-            <input id="submit-input" type="submit" value="Submit"/>
+          <form id="signin-form" className="container" onSubmit={(e) => this.handleNewUser(e)}>
+            <div className="row justify-content-md-center">
+              <div className="col-sm-4">
+                <label htmlFor="email-input">Enter a valid email address</label>
+              </div>
+              <div className="col-sm-4">
+                <input id="email-input" name="username" type="email"/>
+              </div>
+            </div>
+            <div className="row justify-content-md-center">
+              <div className="col-sm-4">
+                <label htmlFor="password-input">Enter your password</label>
+              </div>
+              <div className="col-sm-4">
+                <input id="password-input" name="password" type="password"/>
+              </div>
+            </div>
+            <div className="row justify-content-md-center">
+              <div className="col-sm-4">
+                <label htmlFor="password-confirmation-input">Confirm Password</label>
+              </div>
+              <div className="col-sm-4">
+                <input id="password-confirmation-input" name="password-confirmation" type="password"/>
+              </div>
+            </div>
+            <div className="row justify-content-md-center">
+              <div className="col-sm-4">
+                <label htmlFor="handle-name-input">Choose a handle name</label>
+              </div>
+              <div className="col-sm-4">
+                <input id="handle-name-input" name="handleName" type="text"/>
+              </div>
+            </div>
+            <div className="row justify-content-md-end">
+              <div className="col-sm-6">
+                <input id="sign-in-submit-input" type="submit" value="Submit"/>
+                <button id="sign-in-cancel-button" onClick={() => this.displayNewUserForm()}>Cancel</button>
+              </div>
+            </div>
           </form>
       }
       else if (!this.state.displayNewUserForm && this.state.displaySignInForm) {
         form =
-          <form id="signin-form" onSubmit={(e) => this.handleSignIn(e)}>
-            <label htmlFor="email-input">Enter a valid email address</label>
-            <input id="email-input" name="username" type="email"/>
-            <label htmlFor="password-input">Enter your password</label>
-            <input id="password-input" name="password" type="password"/>
-            <input id="submit-input" type="submit" value="Submit"/>
+          <form id="signin-form" className="container" onSubmit={(e) => this.handleSignIn(e)}>
+            <div className="row justify-content-md-center">
+              <div className="col-sm-4">
+                <label htmlFor="email-input">Enter a valid email address</label>
+              </div>
+              <div className="col-sm-4">
+                <input id="email-input" name="username" type="email"/>
+              </div>
+            </div>
+            <div className="row justify-content-md-center">
+              <div className="col-sm-4">
+                <label htmlFor="password-input">Enter your password</label>
+              </div>
+              <div className="col-sm-4">
+                <input id="password-input" name="password" type="password"/>
+              </div>
+            </div>
+            <div className="row justify-content-md-end">
+              <div className="col-sm-6">
+                <input id="sign-in-submit-input" type="submit" value="Submit"/>
+              </div>
+            </div>
           </form>
       }
       else {
-        form = <span></span>
+        form = <span id="form-placeholder"></span>
       }
           return (
-          <div>
-            {button}
+          <div id="sign-in-wrapper" className="container-fluid">
+            <div className="row justify-content-sm-left">
+              <div className="col">
+                {button}
+              </div>
+            </div>
             {form}
-            <button id="cancel-button" style={cancelVisibility} onClick={() => this.displayNewUserForm()}>Cancel</button>
           </div>
     )
   }

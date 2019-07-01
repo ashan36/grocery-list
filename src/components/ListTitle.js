@@ -93,15 +93,15 @@ class ListTitle extends Component {
   }
 
   render() {
-    let listInput = (this.state.isEditing) ? <div><input id="list-edit-input" autoFocus="true" type="text" placeholder={this.props.list.listName} value={this.state.newListName} onChange= { (e) => this.handleValueChange(e) } onKeyPress={ (e) => this.validateKeyPress(e) } />
-    <button id="delete-list-button" onClick={() => this.deleteList()}>Delete</button>
-    </div>
+    let listInput = (this.state.isEditing) ? <span><button id="delete-list-button" className="icon ion-md-close" onClick={() => this.deleteList()}></button>
+      <input id="list-edit-input" autoFocus="true" type="text" placeholder={this.props.list.listName} value={this.state.newListName} onChange= { (e) => this.handleValueChange(e) } onKeyPress={ (e) => this.validateKeyPress(e) } />
+    </span>
     : this.props.list.listName
-    let listHeading = (this.state.isOwner) ? <h2 id="list-heading" onClick={() => this.toggleEdit()}>{listInput}</h2> : <h2 id="list-heading">{this.props.list.listName}</h2>
+    let listHeading = (this.state.isOwner) ? <h1 id="list-heading" onClick={() => this.toggleEdit()}>{listInput}</h1> : <h1 id="list-heading">{this.props.list.listName}</h1>
 
     return (
-      <div>
-      {listHeading}
+      <div id="list-heading-wrapper" className="col">
+        {listHeading}
       </div>
     )
   }

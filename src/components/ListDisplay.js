@@ -108,6 +108,7 @@ class ListDisplay extends Component {
       console.log("Delete Updated Received");
       let newLists = this.state.lists;
       let listIndex = newLists.findIndex((value) => {return (value.id === data.listId)});
+      this.props.socket.unsubscribe(newLists[listIndex].roomName);
       newLists.splice(listIndex, 1);
       this.setState({
         lists: newLists,
@@ -129,31 +130,38 @@ class ListDisplay extends Component {
   render() {
     let newListInput = this.state.displayNewListInput ?
     <input id="new-list-input" type="text" placeholder="New List Name" value={this.state.newListName} onChange= { (e) => this.handleValueChange(e) } onKeyPress={ (e) => this.validateKeyPress(e) } onBlur={ () => this.toggleNewListInput() } autoFocus="true"/> :
-    <button id="new-list-button" onClick={() => this.toggleNewListInput()}>New List</button>;
-    let selectedGList = (this.state.selectedListIndex !== null) ? <GroceryList className="g-list-display" list={this.state.lists[this.state.selectedListIndex]} user={this.props.user} socket={this.props.socket}></GroceryList> : <div className="comp-placeholder"></div>;
-    let selectedMemberList = (this.state.selectedListIndex !== null) ? <MemberList className="member-list-display" list={this.state.lists[this.state.selectedListIndex]} user={this.props.user} socket={this.props.socket} receiveUpdate={(data) => this.receiveUpdate(data)}></MemberList> : <div className="comp-placeholder"></div>;
-    let seletedListTitle = (this.state.selectedListIndex !== null) ? <ListTitle className="list-title-display" list={this.state.lists[this.state.selectedListIndex]} user={this.props.user} socket={this.props.socket} receiveUpdate={(data) => this.receiveUpdate(data)}></ListTitle> : <div className="comp-placeholder"></div>;
+    <button id="new-list-button" className="icon ion-md-add" onClick={() => this.toggleNewListInput()}>&nbsp;New List</button>;
+    let selectedGList = (this.state.selectedListIndex !== null) ? <GroceryList id="g-list-display" list={this.state.lists[this.state.selectedListIndex]} user={this.props.user} socket={this.props.socket}></GroceryList> : <div className="comp-placeholder"></div>;
+    let selectedMemberList = (this.state.selectedListIndex !== null) ? <MemberList id="member-list-display" list={this.state.lists[this.state.selectedListIndex]} user={this.props.user} socket={this.props.socket} receiveUpdate={(data) => this.receiveUpdate(data)}></MemberList> : <div className="comp-placeholder"></div>;
+    let seletedListTitle = (this.state.selectedListIndex !== null) ? <ListTitle id="list-title-display" list={this.state.lists[this.state.selectedListIndex]} user={this.props.user} socket={this.props.socket} receiveUpdate={(data) => this.receiveUpdate(data)}></ListTitle> : <div className="comp-placeholder"></div>;
 
       return (
-      <div>
-        <table>
-          <tbody>
-            {
-              this.state.lists.map( (value, index) => {
-                return (
-                  <tr className="g-list-row" key={value.id}>
-                    <td className="g-list-cell" onClick={() => this.selectGList(index)}>{value.listName}</td>
-                    <td className="g-list-controls"></td>
-                  </tr>
-                )
-              })
-            }
-            <tr className="new-list-row"><td className="new-list-cell">{newListInput}</td></tr>
-          </tbody>
-        </table>
-        {seletedListTitle}
-        {selectedMemberList}
-        {selectedGList}
+      <div id="list-display-wrapper" className="container-fluid">
+        <div className="row">
+          <div className="col-4">
+            <table id="list-display-table">
+              <tbody>
+                {
+                  this.state.lists.map( (value, index) => {
+                    return (
+                      <tr className="g-list-row" key={value.id}>
+                        <td className="g-list-cell" onClick={() => this.selectGList(index)}><ul><li>{value.listName}</li></ul></td>
+                      </tr>
+                    )
+                  })
+                }
+                <tr className="new-list-row"><td className="new-list-cell">{newListInput}</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="col-8 align-self-center">
+            {seletedListTitle}
+          </div>
+        </div>
+        <div className="row">
+          {selectedGList}
+          {selectedMemberList}
+        </div>
       </div>
       )
   }

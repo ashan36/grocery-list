@@ -180,11 +180,11 @@ class GroceryList extends Component {
 
   render() {
     let newItemInput = this.state.displayNewItemInput ?
-    <input id="new-item-input" type="text" placeholder="New Item Name" value={this.state.newItemName} onChange= { (e) => this.handleValueChange(e) } onKeyPress={ (e) => this.validateKeyPress(e) } onBlur={ () => this.toggleNewItemInput() } autoFocus="true" /> :
-    <button id="new-item-button" onClick={() => this.toggleNewItemInput()}>New Item</button>;
+    <input id="new-item-input" type="text" placeholder="New Item Name" maxLength="24" value={this.state.newItemName} onChange= { (e) => this.handleValueChange(e) } onKeyPress={ (e) => this.validateKeyPress(e) } onBlur={ () => this.toggleNewItemInput() } autoFocus="true" /> :
+    <button id="new-item-button" className="icon ion-md-add" onClick={() => this.toggleNewItemInput()}></button>;
 
     return (
-      <div>
+      <div id="list-wrapper" className="col-lg-6">
         <table>
           <thead>
             <th>Item Name</th>
@@ -201,7 +201,7 @@ class GroceryList extends Component {
                 <tr className="new-item-row"><td className="new-item-cell">{newItemInput}</td></tr>
               </tbody>
             </table>
-      </div>
+          </div>
     )
   }
 }
