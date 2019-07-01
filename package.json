@@ -27,7 +27,7 @@
     "jasmine": "^3.4.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node server/server.js",
     "build": "react-scripts build",
     "test": "jasmine",
     "eject": "react-scripts eject"
