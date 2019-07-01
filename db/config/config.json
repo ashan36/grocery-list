@@ -10,13 +10,14 @@
   },
 
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
+    "username": "lictdhayacvonu",
+    "password": "e1af623232da7d4da3fd3097e6c6b48eef9867c82573328b6fd4fe9d08d963ff",
+    "database": "d8qnan389l0d8o",
+    "host": "ec2-54-225-205-79.compute-1.amazonaws.com",
     "dialect": "postgres",
     "logging": false,
     "operatorsAliases": false,
-    "use_env_variable": "DATABASE_URL"
+    "use_env_variable": "DATABASE_URL",
+    "port": 5432
   }
 }
