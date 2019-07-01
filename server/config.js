@@ -9,7 +9,7 @@ module.exports = {
   init(app, express) {
     const staticRoutes = require("./routes_static.js");
     app.use(session({
-      secret: process.env.cookieSecret,
+      secret: "Sign the session id",
       resave: false,
       saveUninitialized: false,
       cookie: { maxAge: 1.21e+9 }
