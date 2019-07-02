@@ -129,7 +129,7 @@ class ListDisplay extends Component {
 
   render() {
     let newListInput = this.state.displayNewListInput ?
-    <input id="new-list-input" type="text" placeholder="New List Name" value={this.state.newListName} onChange= { (e) => this.handleValueChange(e) } onKeyPress={ (e) => this.validateKeyPress(e) } onBlur={ () => this.toggleNewListInput() } autoFocus="true"/> :
+    <input id="new-list-input" maxLength="20" type="text" placeholder="New List Name" value={this.state.newListName} onChange= { (e) => this.handleValueChange(e) } onKeyPress={ (e) => this.validateKeyPress(e) } onBlur={ () => this.toggleNewListInput() } autoFocus="true"/> :
     <button id="new-list-button" className="icon ion-md-add" onClick={() => this.toggleNewListInput()}>&nbsp;New List</button>;
     let selectedGList = (this.state.selectedListIndex !== null) ? <GroceryList id="g-list-display" list={this.state.lists[this.state.selectedListIndex]} user={this.props.user} socket={this.props.socket}></GroceryList> : <div className="comp-placeholder"></div>;
     let selectedMemberList = (this.state.selectedListIndex !== null) ? <MemberList id="member-list-display" list={this.state.lists[this.state.selectedListIndex]} user={this.props.user} socket={this.props.socket} receiveUpdate={(data) => this.receiveUpdate(data)}></MemberList> : <div className="comp-placeholder"></div>;
@@ -138,14 +138,14 @@ class ListDisplay extends Component {
       return (
       <div id="list-display-wrapper" className="container-fluid">
         <div className="row">
-          <div className="col-4">
+          <div className="col-md-5">
             <table id="list-display-table">
               <tbody>
                 {
                   this.state.lists.map( (value, index) => {
                     return (
                       <tr className="g-list-row" key={value.id}>
-                        <td className="g-list-cell" onClick={() => this.selectGList(index)}><ul><li>{value.listName}</li></ul></td>
+                        <td className="g-list-cell"><ul><li className="g-list-element" onClick={() => this.selectGList(index)}>{value.listName}</li></ul></td>
                       </tr>
                     )
                   })
@@ -154,7 +154,7 @@ class ListDisplay extends Component {
               </tbody>
             </table>
           </div>
-          <div className="col-8 align-self-center">
+          <div className="col-md-7 align-self-center">
             {seletedListTitle}
           </div>
         </div>

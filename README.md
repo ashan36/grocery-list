@@ -23,6 +23,4 @@ Testing - Jasmine
 
 2. The app restricts the user from taking certain actions unless they are the owner of a list. This is accomplished only on the client side currently. If I spent more time working on it, I would implement some additional server side validation of inputs and to also validate the source of requests.
 
-3. I didn't have the chance to test my frontend on mobile devices, so I'm not sure if a user can comfortably use the interface with a touch screen.
-
-4. The app communicates with the user pretty heavily using window alerts, which I think isn't great for the user experience, but was done out of expediency. I would like to implement a cleaner way to provide this kind of information to the user.
+3. The app communicates with the user pretty heavily using window alerts, which I think isn't great for the user experience, but was done out of expediency. I would like to implement a cleaner way to provide this kind of information to the user.
