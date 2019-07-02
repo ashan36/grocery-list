@@ -30,7 +30,7 @@ class MemberList extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(this.props.list !== prevProps.list) {
+    if(this.props.list.id !== prevProps.list.id) {
     this.props.socket.getListMembers(this.props.list.id, (message, data) => {
       if(data !== false) {
         this.setState({
@@ -66,27 +66,31 @@ class MemberList extends Component {
   }
 
   receiveUpdate(data) {
-    switch (data.op) {
-      case "addmember": {
-        let newMembers = this.state.listMembers;
-        newMembers.push(data.newUser);
-        this.setState({
-          listMembers: newMembers,
-        });
-        break;
-      }
-      case "removemember": {
-        if(data.removedUserId === this.props.user.id) {
-          this.props.receiveUpdate({op: "deletelist", listId: this.props.list.id});
-          return;
+    if(data.roomName === this.props.list.roomName) {
+      switch (data.op) {
+        case "addmember": {
+          let newMembers = this.state.listMembers;
+          newMembers.push(data.newUser);
+          this.setState({
+            listMembers: newMembers,
+          });
+          break;
         }
-        let newMembers = this.state.listMembers;
-        let removeIndex = newMembers.findIndex((value) => {return (value.id === data.removedUserId)});
-        newMembers.splice(removeIndex, 1);
-        this.setState({
-          listMembers: newMembers,
-        });
-        break;
+        case "removemember": {
+          if(data.removedUserId === this.props.user.id) {
+            this.props.receiveUpdate({op: "deletelist", listId: this.props.list.id});
+            return;
+          }
+          else {
+            let newMembers = this.state.listMembers;
+            let removeIndex = newMembers.findIndex((value) => {return (value.id === data.removedUserId)});
+            newMembers.splice(removeIndex, 1);
+            this.setState({
+              listMembers: newMembers,
+            });
+          }
+          break;
+        }
       }
     }
   }
@@ -200,11 +204,14 @@ class MemberList extends Component {
                     removeUserButton = <button className="delete-button icon ion-md-close" onClick={() => this.removeUser(value.id)}></button>
                   }
                   else {
-                    removeUserButton = <button id="owner-remove-button" className="remove-user-button icon ion-md-close"></button>
+                    removeUserButton = <button className="remove-user-button-placeholder icon ion-md-close"></button>
                   }
                 }
                 else if(value.id === this.props.user.id) { //is the currently logged in user on the list add a leave button to their own name.
                   removeUserButton = <button className="delete-button icon ion-md-close" onClick={() => this.removeUser(value.id)}></button>
+                }
+                else {
+                  removeUserButton = <button className="remove-user-button-placeholder icon ion-md-close"></button>
                 }
 
                 return (

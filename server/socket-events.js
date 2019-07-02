@@ -78,7 +78,7 @@ eventConfig (socket) {
         }
         else {
           callback("List Updated", true);
-          socket.to(roomName).emit('dataUpdate', {op: "updatelist", gList: gList})
+          socket.to(roomName).emit('dataUpdate', {op: "updatelist", gList: gList, roomName: roomName})
         }
       });
     });
@@ -130,7 +130,7 @@ eventConfig (socket) {
             }
             else {
               callback("User successfully added", {id: user.id, handle: user.handle});
-              socket.to(roomName).emit('dataUpdate', {op: "addmember", newUser: {id: user.id, handle: user.handle}});
+              socket.to(roomName).emit('dataUpdate', {op: "addmember", newUser: {id: user.id, handle: user.handle}, roomName: roomName});
               socket.to(user.email).emit('dataUpdate', {op: "sharelist"});
             }
           });
@@ -162,7 +162,7 @@ eventConfig (socket) {
         }
       });
       callback("User successfully removed", true);
-      socket.to(roomName).emit('dataUpdate', {op: "removemember", removedUserId: userId, removedListId: listId});
+      socket.to(roomName).emit('dataUpdate', {op: "removemember", removedUserId: userId, removedListId: listId, roomName: roomName});
     });
 
     socket.on('subscribeToList', (roomName) => {
@@ -201,7 +201,7 @@ eventConfig (socket) {
         else {
           var itemData = {id: newItem.id, itemName: newItem.itemName, complete: newItem.complete};
           callback("Item created", itemData);
-          socket.to(roomName).emit('dataUpdate', {op:"createitem", newItem: itemData});
+          socket.to(roomName).emit('dataUpdate', {op:"createitem", newItem: itemData, roomName: roomName});
         }
       });
     });
@@ -218,7 +218,7 @@ eventConfig (socket) {
           return;
         }
         callback("Item deleted", true);
-        socket.to(roomName).emit('dataUpdate', {op: "deleteitem", oldItemId: itemId});
+        socket.to(roomName).emit('dataUpdate', {op: "deleteitem", oldItemId: itemId, roomName: roomName});
       });
     });
 
@@ -234,7 +234,7 @@ eventConfig (socket) {
           return;
         }
         callback("Item Updated", true);
-        socket.to(roomName).emit('dataUpdate', {op: "updateitem", newItem: listItem});
+        socket.to(roomName).emit('dataUpdate', {op: "updateitem", newItem: listItem, roomName: roomName});
       });
     });
   }

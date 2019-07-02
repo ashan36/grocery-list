@@ -16,11 +16,11 @@ Socket.io Events
 
   Emit Events
     dataUpdate (dataObj) //see possible data objects below
-      item updated {op: "updateitem", newItem: listItem}
-      item deleted {op: "deleteitem", oldItemId: id}
-      item created {op: "createitem", newItem: listItem}
-      member added {op: "addmember", newUser: user}
-      member removed {op: "removemember", removedUserId: userId, removedListId: listId}
-      list updated { op: "updatelist", gList: gList}
-      list deleted {op: "deletelist", listId: id}
+      item updated {op: "updateitem", newItem: listItem, roomName: roomName}
+      item deleted {op: "deleteitem", oldItemId: id, roomName: roomName}
+      item created {op: "createitem", newItem: listItem, roomName: roomName}
+      member added {op: "addmember", newUser: user, roomName: roomName}
+      member removed {op: "removemember", removedUserId: userId, removedListId: listId, roomName: roomName}
+      list updated { op: "updatelist", gList: gList, roomName: roomName}
+      list deleted {op: "deletelist", listId: id, roomName: roomName}
       list shared {op: "sharelist"} //trigger a list refresh

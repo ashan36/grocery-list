@@ -29,7 +29,7 @@ class GroceryList extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(this.props.list !== prevProps.list) {
+    if(this.props.list.id !== prevProps.list.id) {
       this.props.socket.getListItems(this.props.list.id, (message, data) => {
         if(data !== false) {
           this.setState({
@@ -51,45 +51,47 @@ class GroceryList extends Component {
   }
 
   receiveUpdate(data) {
-    switch (data.op) {
-      case "updateitem": {
-        console.log("List item update received");
-        let newItems = this.state.listItems;
-        let itemIndex = newItems.findIndex((value) => {return (value.id === data.newItem.id)});
-        if(itemIndex !== -1) {
-          newItems[itemIndex] = data.newItem;
+    if(data.roomName === this.props.list.roomName) {
+      switch (data.op) {
+        case "updateitem": {
+          console.log("List item update received");
+          let newItems = this.state.listItems;
+          let itemIndex = newItems.findIndex((value) => {return (value.id === data.newItem.id)});
+          if(itemIndex !== -1) {
+            newItems[itemIndex] = data.newItem;
+            this.setState({
+              listItems: newItems,
+            });
+          }
+          else {
+            console.log("item to update not found");
+          }
+          break;
+        }
+        case "deleteitem": {
+          console.log("delete item update received");
+          let newItems = this.state.listItems;
+          let itemIndex = newItems.findIndex((value) => {return (value.id === data.oldItemId)});
+          if(itemIndex !== -1) {
+            newItems.splice(itemIndex, 1);
+            this.setState({
+              listItems: newItems,
+            });
+          }
+          else {
+            console.log("item to delete not found");
+          }
+          break;
+        }
+        case "createitem": {
+          console.log("Create item update received");
+          let newItems = this.state.listItems;
+          newItems.push(data.newItem);
           this.setState({
             listItems: newItems,
           });
+          break;
         }
-        else {
-          console.log("item to update not found");
-        }
-        break;
-      }
-      case "deleteitem": {
-        console.log("delete item update received");
-        let newItems = this.state.listItems;
-        let itemIndex = newItems.findIndex((value) => {return (value.id === data.oldItemId)});
-        if(itemIndex !== -1) {
-          newItems.splice(itemIndex, 1);
-          this.setState({
-            listItems: newItems,
-          });
-        }
-        else {
-          console.log("item to delete not found");
-        }
-        break;
-      }
-      case "createitem": {
-        console.log("Create item update received");
-        let newItems = this.state.listItems;
-        newItems.push(data.newItem);
-        this.setState({
-          listItems: newItems,
-        });
-        break;
       }
     }
   }

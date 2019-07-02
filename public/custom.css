@@ -100,7 +100,7 @@ ul {
   color: white;
 }
 
-#owner-remove-button {
+.remove-user-button-placeholder {
   visibility: hidden;
 }
 

@@ -10,6 +10,8 @@ export default class SocketHandler {
       console.log("received an update! " + data.op);
       for (var i = 0; i < this.updateRegister.length; i++) {
         try {
+          console.log("calling ");
+          console.log(this.updateRegister[i].id);
           this.updateRegister[i].fn(data);
         }
         catch {
@@ -25,6 +27,8 @@ export default class SocketHandler {
   }
 
   registerForUpdates(signature, callback) {
+    console.log("registering");
+    console.log(signature);
     var foundIndex = this.updateRegister.findIndex((value) => {return (value.id === signature)});
     if (foundIndex !== -1) {
       return;
@@ -38,7 +42,7 @@ export default class SocketHandler {
   deregisterForUpdates(signature) {
     console.log("Deregistering");
     console.log(signature);
-    
+
     for (var i = 0; i < this.updateRegister.length; i++) {
       if(this.updateRegister[i].id === signature) {
         this.updateRegister.splice(i, 1);
