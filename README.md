@@ -8,15 +8,15 @@ In order to make this web app, my first thought was to make it an SPA. For any u
 A majority of the tech stack decision were made by attempting to balance the vision I had for how I wanted the app to work, and my familiarity with each technology. Limited time made the latter concern increasingly more important, however it was also a goal to try things I've never done before and grow while working on this project.
 
 ## Tech Stack
-Database - PostGRES
-ORM - Sequelize
-Backend - Node.js
-Static Route Handler - Express
-Event Driven Server-Client Communication - Socket.io
-Frontend - React
-CSS Layout - Bootstrap
-Deployment - Heroku
-Testing - Jasmine
+- Database - PostGRES
+- ORM - Sequelize
+- Backend - Node.js
+- Static Route Handler - Express
+- Event Driven Server-Client Communication - Socket.io
+- Frontend - React
+- CSS Layout - Bootstrap
+- Deployment - Heroku
+- Testing - Jasmine
 
 ## Other Concerns
 1. Right now the app stores too much data as objects from the database as state (User IDs, List IDs, etc), I also pass this info back and forth to allow the client to specify what it's requesting from the server. This couples the server's handling of requests with the client more than I would like. I think this is pretty unsafe and would allow someone to abuse my app in ways I hadn't planned for.
