@@ -21,6 +21,6 @@ A majority of the tech stack decision were made by attempting to balance the vis
 ## Other Concerns
 1. Right now the app stores too much data as objects from the database as state (User IDs, List IDs, etc), I also pass this info back and forth to allow the client to specify what it's requesting from the server. This couples the server's handling of requests with the client more than I would like. I think this is pretty unsafe and would allow someone to abuse my app in ways I hadn't planned for.
 
-2. The app restricts the user from taking certain actions unless they are the owner of a list. This is accomplished only on the client side currently. If I spent more time working on it, I would implement some additional server side validation of inputs and to also validate the source of requests.
+2. The app restricts the user from taking certain actions unless they are the owner of a list. This is accomplished only on the client side currently. If I had more time to work on it, I would implement some additional server side validation of inputs and to also validate the source of requests.
 
 3. The app communicates with the user pretty heavily using window alerts, which I think isn't great for the user experience, but was done out of expediency. I would like to implement a cleaner way to provide this kind of information to the user.
